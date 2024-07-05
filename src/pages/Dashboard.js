@@ -1,13 +1,17 @@
 // src/pages/Dashboard.js
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import api from '../services/axios/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import Header from '../components/Header';
+import BettingInfo from '../components/BettingInfo';
+import EventDetails from '../components/EventDetails';
 import { logout } from '../slices/authSlice';
 
-const Dashboard = () => {
+const Dashboard = ({ content }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -19,12 +23,7 @@ const Dashboard = () => {
         if (!token || !userData) {
           handleLogout();
         } else {
-          const response = await api.get(`/v1/users/${userData.id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUser(response.data);
+          setUser(userData);
           setLoading(false);
         }
       } catch (error) {
@@ -47,18 +46,17 @@ const Dashboard = () => {
     return <p>Loading...</p>;
   }
 
+  const isEventDetailsPage = location.pathname.startsWith('/event/');
+  
   return (
-    <div className="p-4">
-      <header className="flex justify-between items-center mb-4">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p>Welcome, {user.name} ({user.email})</p>
+    <div className="flex flex-col h-screen">
+      <Header user={user} onLogout={handleLogout} />
+      <div className="flex flex-grow overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 overflow-auto p-4">
+          {isEventDetailsPage ? <EventDetails /> : <BettingInfo />}
         </div>
-        <button onClick={handleLogout} className="bg-red-500 text-white font-bold py-2 px-4 rounded">
-          Logout
-        </button>
-      </header>
-      {/* Add the rest of your dashboard content here */}
+      </div>
     </div>
   );
 };

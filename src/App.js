@@ -11,6 +11,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import Users from './pages/Users';
 import User from './pages/User';
 import ProtectedRoute from './ProtectedRoute';
+import EventDetails from './components/EventDetails';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
         <Route path="/users/:userId" element={<ProtectedRoute><User /></ProtectedRoute>} />
+        <Route path="/event/:eventId" element={<ProtectedRoute><Dashboard content={<EventDetails />} /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
